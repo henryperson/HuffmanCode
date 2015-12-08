@@ -18,7 +18,6 @@ public class HuffmanPriorityQueue {
 	
 	public class HuffmanLeafNode extends HuffmanNode {
 		public int character;
-		public int frequency;
 		
 		public HuffmanLeafNode(int character, int frequency) {
 			this.character = character;
@@ -69,12 +68,14 @@ public class HuffmanPriorityQueue {
 		Iterator<Integer> i = m.keySet().iterator();
 		while (i.hasNext()) {
 			int next = i.next();
+			System.out.println("" + next + "  " + m.get(next));
 			add(next, m.get(next));
+			
 		}
 	}
 	
 	public void condense() {
-		for (int i = data.length - size; i >= 0; i--) {
+		for (int i = data.length - size -1; i >= 0; i--) {
 			data[i] = merge(data[firstChildOf(i)], data[secondChildOf(i)]);
 		}
 	}

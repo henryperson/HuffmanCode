@@ -8,7 +8,7 @@ public class HuffmanTree {
 	private int size;
 	
 	public HuffmanTree(Map<Integer, Integer> m) {
-		HuffmanPriorityQueue pq = new HuffmanPriorityQueue(2*m.size() - 1);
+		HuffmanPriorityQueue pq = new HuffmanPriorityQueue(2*m.size() + 1);
 		pq.addFromMap(m);
 		pq.condense();
 		data = pq.getArray();
@@ -20,7 +20,7 @@ public class HuffmanTree {
 		freqMap.put((int) ' ', 2);
 		freqMap.put((int) 'b', 2);
 		freqMap.put((int) 'a', 3);
-		HuffmanPriorityQueue pq = new HuffmanPriorityQueue(2*freqMap.size() - 1);
+		HuffmanPriorityQueue pq = new HuffmanPriorityQueue(2*freqMap.size() + 1);
 		pq.addFromMap(freqMap);
 		pq.condense();
 		System.out.println(pq.toString());
