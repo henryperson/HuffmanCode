@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class GrinEncoder {
 	public static Map<Integer, Integer> createFrequencyMap(String file) throws IOException {
@@ -28,14 +29,19 @@ public class GrinEncoder {
 		return map;
 	}
 	
-	public static void encode(String infile, String outfile) throws FileNotFoundException {
+	public static void encode(String infile, String outfile) throws IOException {
 		Map<Integer, Integer> map = createFrequencyMap(infile);
 		BitOutputStream bitStream = new BitOutputStream(outfile);
-		writeHeader(bitStream);
+		writeHeader(bitStream, map);
 	}
 	
 	public static void writeHeader(BitOutputStream bitStream, Map<Integer, Integer> map) {
 		bitStream.writeBits(1846, 32);
-		// TODO: finish this
+		bitStream.writeBits(map.size(), 32);
+		Set<Integer> keys = map.keySet();
+		for (Integer key : keys) {
+			bitStream.writeBits(key, 32);
+			bitStream.writeBits(map.get(key), 32);
+		}
 	}
 }
