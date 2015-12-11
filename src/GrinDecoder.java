@@ -10,6 +10,7 @@ public class GrinDecoder {
 		BitInputStream bitStream = new BitInputStream(infile);
 		
 		int magicNumber = bitStream.readBits(32);
+		System.out.println(magicNumber);
 		if (magicNumber != 1846) { throw new IllegalArgumentException(); }
 		
 		int characters = bitStream.readBits(32);

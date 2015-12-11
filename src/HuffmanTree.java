@@ -19,7 +19,7 @@ public class HuffmanTree {
 			int next = iter.next();
 			HuffmanLeafNode leaf = new HuffmanLeafNode(next, m.get(next));
 			data.add(leaf);
-		}		
+		}
 		condense();
 	}
 	
@@ -62,18 +62,19 @@ public class HuffmanTree {
 		public String toString() {
 			return "[" + character + "," + frequency + "]";
 		}
-		
+			
 	}
 	
 	private void condense() {
-		while (data.size() != 1){
+		if (data.size() == 1) {
+			root = data.poll();
+		} else {
 			HuffmanNode fst = data.poll();
 			HuffmanNode snd = data.poll();
 			HuffmanNode node = new HuffmanNode(fst, snd);
 			data.add(node);
 			condense();
 		}
-		root = data.poll();
 	}
 	
 	public void encode(List<Integer> characters, BitOutputStream stream) {
@@ -81,8 +82,11 @@ public class HuffmanTree {
 		String currentCode = "";
 		encodeHelper(this.root, hufMap, currentCode, "");
 		for (Integer ch : characters){
+			System.out.println(ch);
 			String hufCode = hufMap.get(ch);
+			System.out.println(hufCode);
 			for (int i = 0; i < hufCode.length(); i++){
+				
 				stream.writeBit(Character.getNumericValue(hufCode.charAt(i)));
 			}
 		}
@@ -90,8 +94,10 @@ public class HuffmanTree {
 	
 	private void encodeHelper(HuffmanNode root, HashMap<Integer, String> hufMap, String currentCode, String num){
 		currentCode = currentCode + num;
+		System.out.println(root);
 		if (root instanceof HuffmanLeafNode){
-			hufMap.put(root.frequency, currentCode);
+			hufMap.put(((HuffmanLeafNode) root).character, currentCode);
+			System.out.println(currentCode);
 			return;
 		}
 		if (root.fst != null) {
@@ -137,15 +143,7 @@ public class HuffmanTree {
 		freqMap.put((int) 'b', 2);
 		freqMap.put((int) 'a', 3);
 		HuffmanTree ht = new HuffmanTree(freqMap);
-		List<Integer> l = new ArrayList<>();
-		l.add((int) 'a');
-		l.add((int) 'b');
-		l.add((int) ' ');
-		l.add((int) 'a');
-		l.add((int) 'b');
-		l.add((int) 'z');
-		l.add((int) ' ');
-		l.add((int) 'z');
+		System.out.println(ht.root.snd.fst.snd);
 		
 	}
 }
