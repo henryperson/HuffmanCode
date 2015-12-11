@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -76,23 +77,56 @@ public class HuffmanTree {
 	}
 	
 	public void encode(List<Integer> characters, BitOutputStream stream) {
-		Iterator<Integer> iter = characters.iterator();
-		HashMap<Integer, Integer> freqMap = new HashMap<>();
-		while (iter.hasNext()){
-			int next = iter.next();
-			if (freqMap.containsKey(next)){
-				freqMap.replace(next, freqMap.get(next) + 1);
-			} else {
-				freqMap.put(next, 1);
+		HashMap<Integer, String> hufMap = new HashMap<>();
+		String currentCode = "";
+		encodeHelper(this.root, hufMap, currentCode, "");
+		for (Integer ch : characters){
+			String hufCode = hufMap.get(ch);
+			for (int i = 0; i < hufCode.length(); i++){
+				stream.writeBit(Character.getNumericValue(hufCode.charAt(i)));
 			}
 		}
-		HuffmanTree ht = new HuffmanTree(freqMap);
-		HuffmanNode node = ht.root;
-		
 	}
 	
-	public List decode(BitInputStream stream) {
-		
+	private void encodeHelper(HuffmanNode root, HashMap<Integer, String> hufMap, String currentCode, String num){
+		currentCode = currentCode + num;
+		if (root instanceof HuffmanLeafNode){
+			hufMap.put(root.frequency, currentCode);
+			return;
+		}
+		if (root.fst != null) {
+			encodeHelper(root.fst, hufMap, currentCode, "0");
+		}
+		if (root.snd != null) {
+			encodeHelper(root.snd, hufMap, currentCode, "1");
+		}
+	}
+	
+	public List<String> decode(BitInputStream stream) {
+		List<String> list = new ArrayList<>();
+		int characterValue = decodeHelper(this.root, stream);
+		while (characterValue != -1) {
+			char input = (char) characterValue;
+			list.add(Character.toString(input));
+		}
+		return list;
+	}
+	
+	private int decodeHelper(HuffmanNode node, BitInputStream stream) {
+		if (node instanceof HuffmanLeafNode) {
+			return ((HuffmanLeafNode) node).character;
+		} else {
+			int bit = stream.readBit();
+			if (bit == -1){
+				return -1;
+			} else if (bit == 0) {
+				return decodeHelper(node.fst, stream);
+			} else if (bit == 1) {
+				return decodeHelper(node.snd, stream);
+			} else {
+				throw new IllegalArgumentException();
+			}
+		}
 	}
 	
 	
@@ -102,12 +136,16 @@ public class HuffmanTree {
 		freqMap.put((int) ' ', 2);
 		freqMap.put((int) 'b', 2);
 		freqMap.put((int) 'a', 3);
-		/*HuffmanPriorityQueue pq = new HuffmanPriorityQueue(2*freqMap.size() + 1);
-		pq.addFromMap(freqMap);
-		pq.condense();
-		System.out.println(pq.toString());*/
 		HuffmanTree ht = new HuffmanTree(freqMap);
-		
+		List<Integer> l = new ArrayList<>();
+		l.add((int) 'a');
+		l.add((int) 'b');
+		l.add((int) ' ');
+		l.add((int) 'a');
+		l.add((int) 'b');
+		l.add((int) 'z');
+		l.add((int) ' ');
+		l.add((int) 'z');
 		
 	}
 }
